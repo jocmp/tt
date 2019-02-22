@@ -10,6 +10,7 @@ import (
 // Arrival describes an individual arrival time prediction
 type Arrival struct {
 	Run string `json:"rn"`
+	ArrivalTime string `json:"arrT"`
 }
 
 // TrainTracker contains a grouping of etas
@@ -45,5 +46,7 @@ func main() {
 	r := &Response{}
 	err = json.Unmarshal(rb, r)
 
-	fmt.Println(r.TrainTracker.Arrivals[0].Run)
+	for _, arrival := range r.TrainTracker.Arrivals {
+		fmt.Printf("arrival: run %s at %s\n", arrival.Run, arrival.ArrivalTime)
+	}
 }
