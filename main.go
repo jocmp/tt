@@ -9,13 +9,31 @@ import (
 
 // Arrival describes an individual arrival time prediction
 type Arrival struct {
-	Run string `json:"rn"`
-	ArrivalTime string `json:"arrT"`
+	StationID            string `json:"staId"`
+	StopID               string `json:"stpId"`
+	StopName             string `json:"staNm"`
+	StopDestination      string `json:"stpDe"`
+	Run                  string `json:"rn"`
+	Route                string `json:"rt"`
+	DestinationStationID string `json:"destSt"`
+	DestinationName      string `json:"destNm"`
+	TrainDirection       string `json:"trDr"`
+	PredictionDateTime   string `json:"string"`
+	ArrivalTime          string `json:"arrT"`
+	IsApproaching        string `json:"isApp"`
+	IsScheduled          string `json:"isSch"`
+	IsDelayed            string `json:"isDly"`
+	HasFault             string `json:"isFlt"`
+	Latitude             string `json:"lat"`
+	Longitude            string `json:"long"`
+	Heading              string `json:"heading"`
 }
 
 // TrainTracker contains a grouping of etas
 type TrainTracker struct {
-	Arrivals []Arrival `json:"eta"`
+	ErrorCode string    `json:"errCd"`
+	ErrorName string    `json:"errNm"`
+	Arrivals  []Arrival `json:"eta"`
 }
 
 // Response of the TT API
