@@ -20,12 +20,17 @@ type Arrival struct {
 	TrainDirection       string `json:"trDr"`
 	PredictionDateTime   string `json:"string"`
 	ArrivalTime          string `json:"arrT"`
+	// "1" if approaching, "0" if due
 	IsApproaching        string `json:"isApp"`
+	// "1" if based on schedule, "0" if prediction
 	IsScheduled          string `json:"isSch"`
+	// "1" if delayed, "0" otherwise
 	IsDelayed            string `json:"isDly"`
+	// "1" if fault is detected, "0" otherwise
 	HasFault             string `json:"isFlt"`
 	Latitude             string `json:"lat"`
 	Longitude            string `json:"long"`
+	// In Degrees
 	Heading              string `json:"heading"`
 }
 
