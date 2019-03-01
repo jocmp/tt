@@ -1,4 +1,4 @@
-package main
+package tt
 
 import (
 	"encoding/json"
@@ -46,30 +46,27 @@ type Response struct {
 	TrainTracker TrainTracker `json:"ctatt"`
 }
 
-func main() {
-	westernMapID := 41480
-	response, err := http.Get(fmt.Sprintf("http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?key=%s&mapid=%d&outputType=JSON", KEY, westernMapID))
+// FetchArrivals returns all upcoming arrivals for a given stopID
+// key is private CTA DLA API key
+func FetchArrivals(key string, stopID int) (*TrainTracker, error) {
+	response, err := http.Get(fmt.Sprintf("http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?key=%s&mapid=%d&outputType=JSON", key, stopID))
 	if err != nil {
-		fmt.Println(err)
-		return
+		return nil, err
 	}
 
 	defer response.Body.Close()
-
 	if response.StatusCode != http.StatusOK {
-		fmt.Printf("error fetching:%d", response.StatusCode)
+		return nil, fmt.Errorf("error fetching:%d", response.StatusCode)
 	}
 
 	rb, err := ioutil.ReadAll(response.Body)
+
 	if err != nil {
-		fmt.Println(err)
-		return
+		return nil, err
 	}
 
 	r := &Response{}
 	err = json.Unmarshal(rb, r)
 
-	for _, arrival := range r.TrainTracker.Arrivals {
-		fmt.Printf("arrival: run %s at %s\n", arrival.Run, arrival.ArrivalTime)
-	}
+	return &r.TrainTracker, err
 }
