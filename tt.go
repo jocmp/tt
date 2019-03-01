@@ -41,8 +41,7 @@ type TrainTracker struct {
 	Arrivals  []Arrival `json:"eta"`
 }
 
-// Response of the TT API
-type Response struct {
+type resp struct {
 	TrainTracker TrainTracker `json:"ctatt"`
 }
 
@@ -65,7 +64,7 @@ func FetchArrivals(key string, stopID int) (*TrainTracker, error) {
 		return nil, err
 	}
 
-	r := &Response{}
+	r := &resp{}
 	err = json.Unmarshal(rb, r)
 
 	return &r.TrainTracker, err
