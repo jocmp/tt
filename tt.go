@@ -13,7 +13,7 @@ type Arrival struct {
 	StopID               string `json:"stpId"`
 	StopName             string `json:"staNm"`
 	StopDestination      string `json:"stpDe"`
-	Run                  string `json:"rn"`
+	Run                  string `json:"rn"`	
 	Route                string `json:"rt"`
 	DestinationStationID string `json:"destSt"`
 	DestinationName      string `json:"destNm"`
@@ -21,17 +21,17 @@ type Arrival struct {
 	PredictionDateTime   string `json:"string"`
 	ArrivalTime          string `json:"arrT"`
 	// "1" if approaching, "0" if due
-	IsApproaching        string `json:"isApp"`
+	IsApproaching string `json:"isApp"`
 	// "1" if based on schedule, "0" if prediction
-	IsScheduled          string `json:"isSch"`
+	IsScheduled string `json:"isSch"`
 	// "1" if delayed, "0" otherwise
-	IsDelayed            string `json:"isDly"`
+	IsDelayed string `json:"isDly"`
 	// "1" if fault is detected, "0" otherwise
-	HasFault             string `json:"isFlt"`
-	Latitude             string `json:"lat"`
-	Longitude            string `json:"long"`
+	HasFault  string `json:"isFlt"`
+	Latitude  string `json:"lat"`
+	Longitude string `json:"long"`
 	// In Degrees
-	Heading              string `json:"heading"`
+	Heading string `json:"heading"`
 }
 
 // TrainTracker contains a grouping of etas
@@ -41,14 +41,27 @@ type TrainTracker struct {
 	Arrivals  []Arrival `json:"eta"`
 }
 
-type resp struct {
+// Response of the TT API
+type Response struct {
 	TrainTracker TrainTracker `json:"ctatt"`
 }
 
-// FetchArrivals returns all upcoming arrivals for a given stopID
+// Arrivals returns all upcoming arrivals for a given stopID
 // key is private CTA DLA API key
-func FetchArrivals(key string, stopID int) (*TrainTracker, error) {
-	response, err := http.Get(fmt.Sprintf("http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?key=%s&mapid=%d&outputType=JSON", key, stopID))
+func Arrivals(key string, stopID int) (*TrainTracker, error) {
+	return fetchTrainTracker(key, fmt.Sprintf("mapid=%d", stopID))
+}
+
+// FollowTrain returns all upcoming arrivals for a given run, e.g. 821, 409
+// key is private CTA DLA API key
+func FollowTrain(key string, run int) (*TrainTracker, error) {
+	return fetchTrainTracker(key, fmt.Sprintf("runnumber=%d", run))
+}
+
+func fetchTrainTracker(key string, path string) (*TrainTracker, error) {
+	baseURL := "https://lapi.transitchicago.com/api/1.0/ttarrivals.aspx"
+
+	response, err := http.Get(fmt.Sprintf("%s?key=%s&%s&outputType=JSON", baseURL, key, path))
 	if err != nil {
 		return nil, err
 	}
@@ -64,7 +77,7 @@ func FetchArrivals(key string, stopID int) (*TrainTracker, error) {
 		return nil, err
 	}
 
-	r := &resp{}
+	r := &Response{}
 	err = json.Unmarshal(rb, r)
 
 	return &r.TrainTracker, err
